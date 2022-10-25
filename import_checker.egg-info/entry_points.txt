@@ -1,0 +1,3 @@
+[console_scripts]
+import-check = import_check.main:main
+
