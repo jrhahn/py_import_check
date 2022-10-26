@@ -1,46 +1,33 @@
 import argparse
-import json
-from copy import copy
+from pathlib import Path
+from typing import List
 
-from pydeps import target
-from pydeps.py2depgraph import py2dep
-from pydeps.pydeps import pydeps, externals
+from import_check.dependency import analyse
 
 
-def print_arguments(arguments: list[str]):
-    res = py2dep(
-        target=target.Target("package_1"),
-        # fname="package_1",
-        show_raw_deps=True,
-        format="svg",
-        exclude_exact="",
-        show_cycles=False,
-        noise_level=2 ** 65,
-        max_bacon=2 ** 65,
-        show_deps=False,
-        start_color=1,
-        externals=True
-    )
+def process(file_names: List[Path]):
+    rules = {
+        "daproto-pose-similarity": {
+            "forbidden_imports": ["daprod_dataset_tools"],
+            "levels": "all"
+        }
+    }
 
-    rules = [{
-        "package": "package_1",
-        "forbidden_imports": ["package_2"],
-        "levels": "all"
-    }]
+    project_root = "/home/jhahn/repositories/daprod-action-analytics-py/"
 
-    for package, infos in res.sources.items():
-        print(f"{package} <- {infos.imports} -> {infos.imported_by}")
+    for file_name in file_names:
+        this_module = str(file_name).split(project_root)[-1].split("/")[0]
 
-        for rule in rules:
-            # if levels == "all"
-            if rule["package"] in package:
-                for forbidden_import in rule["forbidden_imports"]:
-                    # if levels == "all"
-                    if forbidden_import in infos.imports:
-                        raise ValueError(f"{forbidden_import} imported by {package}")
+        dependencies = analyse(Path(file_name))
 
-    # for argument in arguments:
-    #     print(argument)
+        forbidden_imports = rules[this_module]["forbidden_imports"]
+
+        for d in dependencies:
+            if d in forbidden_imports:
+                raise ImportError(f"{file_name} should not import from {forbidden_imports}")
+
+        print(file_name)
+        print(f"  {dependencies}")
 
 
 def main() -> int:
@@ -48,8 +35,10 @@ def main() -> int:
     parser.add_argument("filenames", nargs="*")
     args = parser.parse_args()
 
-    print_arguments(args.filenames)
+    # process(args.filenames)
+    root = "/home/jhahn/repositories/daprod-action-analytics-py/daproto-pose-similarity/"
 
+    process(list(Path(root).rglob("*.py")))
     return 1
 
 
