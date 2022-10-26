@@ -1,24 +1,30 @@
 import argparse
+import logging
 from pathlib import Path
-from typing import List
+from typing import List, Dict
 
 from import_check.dependency import analyse
 
 
-def process(file_names: List[Path]):
-    rules = {
-        "daproto-pose-similarity": {
-            "forbidden_imports": ["daprod_dataset_tools"],
-            "levels": "all"
-        }
+def reshape(rules: List[Dict]) -> Dict:
+    return {
+        rule.pop("module"): rule for rule in rules
     }
 
-    project_root = "/home/jhahn/repositories/daprod-action-analytics-py/"
 
+def process(
+        file_names: List[Path],
+        project_root: Path,
+        rules: Dict,
+) -> None:
     for file_name in file_names:
-        this_module = str(file_name).split(project_root)[-1].split("/")[0]
+        this_module = str(file_name).split(str(project_root))[-1].split("/")[1]
 
         dependencies = analyse(Path(file_name))
+
+        if this_module not in rules:
+            print(f"No rule for {this_module} ({file_name})")
+            continue
 
         forbidden_imports = rules[this_module]["forbidden_imports"]
 
@@ -27,7 +33,7 @@ def process(file_names: List[Path]):
                 raise ImportError(f"{file_name} should not import from {forbidden_imports}")
 
         print(file_name)
-        print(f"  {dependencies}")
+        print(f"\t{dependencies}")
 
 
 def main() -> int:
@@ -36,9 +42,23 @@ def main() -> int:
     args = parser.parse_args()
 
     # process(args.filenames)
-    root = "/home/jhahn/repositories/daprod-action-analytics-py/daproto-pose-similarity/"
+    this_module_root = "/home/jhahn/repositories/daprod-action-analytics-py/daproto-pose-similarity/"
 
-    process(list(Path(root).rglob("*.py")))
+    rules = [
+        {
+            "module": "daproto-pose-similarity",
+            "forbidden_imports": ["daprod_dataset_tools"],
+        }
+    ]
+
+    project_root = Path("/home/jhahn/repositories/daprod-action-analytics-py/")
+
+    process(
+        file_names=list(Path(this_module_root).rglob("*.py")),
+        project_root=project_root,
+        rules=reshape(rules=rules)
+    )
+
     return 1
 
 
