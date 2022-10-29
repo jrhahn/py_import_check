@@ -1,1 +1,6 @@
+coverage
 pre-commit
+pytest
+pytest-mock
+toml
+types-toml

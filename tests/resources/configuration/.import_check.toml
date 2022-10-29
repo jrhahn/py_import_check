@@ -1,0 +1,2 @@
+[package_2]
+forbidden_imports = [ "package_1" ]

@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import argparse
 import logging
+import sys
 from pathlib import Path
-from typing import List, Dict
+from typing import Sequence
 
 from import_check.dependency import analyse
 from import_check.import_check_configuration import load
@@ -14,8 +17,8 @@ def extract_module(file_name: Path) -> str:
 
 
 def check_dependencies(
-        file_name: Path,
-        forbidden_imports: List[str],
+    file_name: Path,
+    forbidden_imports: list[str],
 ) -> bool:
     passed = True
 
@@ -26,17 +29,16 @@ def check_dependencies(
         passed_ = d not in forbidden_imports
 
         if not passed_:
-            logger.info(f"{file_name} should not import from {forbidden_imports}")
+            logger.info(
+                f"{file_name} should not import from {forbidden_imports}"
+            )
 
         passed = passed_ and passed
 
     return passed
 
 
-def check_all_files(
-        config: Dict,
-        file_names: List[Path]
-) -> int:
+def check_all_files(config: dict, file_names: list[Path]) -> int:
     passed = True
 
     for file_name in file_names:
@@ -44,7 +46,9 @@ def check_all_files(
         module = extract_module(file_name=file_name)
         passed_ = check_dependencies(
             file_name=file_name,
-            forbidden_imports=config.get(module, {}).get("forbidden_imports", [])
+            forbidden_imports=config.get(module, {}).get(
+                "forbidden_imports", []
+            ),
         )
 
         passed = passed_ and passed
@@ -55,25 +59,26 @@ def check_all_files(
     return 1
 
 
-def main() -> int:
+def parse_args(args: Sequence[str] | None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=False, default=None)
     parser.add_argument("file_names", nargs="*")
-    args = parser.parse_args()
+    return parser.parse_args(args=args)
 
-    path_config_file = args.config
+
+def main(args: Sequence[str] | None = None) -> int:
+    parsed_args = parse_args(args=args)
+    path_config_file = parsed_args.config
+
     if path_config_file is None:
         path_config_file = Path(".import_check.toml")
 
-    config = load(
-        path_config_file=path_config_file
-    )
+    config = load(path_config_file=path_config_file)
 
     return check_all_files(
-        config=config,
-        file_names=[Path(f) for f in args.file_names]
+        config=config, file_names=[Path(f) for f in parsed_args.file_names]
     )
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(main(args=sys.argv[1:]))
