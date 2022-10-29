@@ -1,6 +1,0 @@
-# .pre-commit-hooks.yaml
-- id: some-id
-  name: some-name
-  description: some description
-  entry: import-check
-  language: python

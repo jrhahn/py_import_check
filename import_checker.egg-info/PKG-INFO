@@ -1,9 +1,0 @@
-Metadata-Version: 2.1
-Name: import-checker
-Version: 0.1.0
-Summary: checks the imports of a module
-Home-page: https://jorgealvarado.me
-Author: Jürgen Hahn
-Author-email: mail.jhahn@gmail.com
-License: MIT
-License-File: LICENSE
