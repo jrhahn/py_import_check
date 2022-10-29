@@ -24,10 +24,3 @@ def analyse(file: Path) -> Set:
         node_iter.visit(ast.parse(f.read()))
 
     return modules
-
-
-if __name__ == "__main__":
-    res = analyse(Path(
-        "/home/jhahn/repositories/daprod-action-analytics-py/daproto-pose-similarity/scripts/action_creation/run_create_action.py"))
-
-    print(res)
