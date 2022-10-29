@@ -1,15 +1,14 @@
 from __future__ import annotations
 
 import argparse
-import logging
 import sys
 from pathlib import Path
 from typing import Sequence
 
+from loguru import logger
+
 from import_check.dependency import analyse
 from import_check.import_check_configuration import load
-
-logger = logging.getLogger(__name__)
 
 
 def extract_module(file_name: Path) -> str:
@@ -29,7 +28,7 @@ def check_dependencies(
         passed_ = d not in forbidden_imports
 
         if not passed_:
-            logger.info(
+            logger.error(
                 f"{file_name} should not import from {forbidden_imports}"
             )
 
