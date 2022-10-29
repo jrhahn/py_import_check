@@ -31,7 +31,7 @@ def check_dependencies(
         passed_ = d not in forbidden_imports
 
         if not passed_:
-            logger.info(
+            logger.error(
                 f"{file_name} should not import from {forbidden_imports}"
             )
 
