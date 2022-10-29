@@ -1,0 +1,6 @@
+- id: import-check
+  name: Import Check
+  description: This hook trims looks for forbidden imports in modules.
+  entry: import-check
+  language: python
+  types: [ text ]
