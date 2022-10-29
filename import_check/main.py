@@ -5,8 +5,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from loguru import logger
-
+from import_check import LOG
 from import_check.dependency import analyse
 from import_check.import_check_configuration import load
 
@@ -21,14 +20,14 @@ def check_dependencies(
 ) -> bool:
     passed = True
 
-    logger.info(f"Checking {file_name}..")
+    LOG.info(f"Checking {file_name}..")
     dependencies = analyse(file=file_name)
 
     for d in dependencies:
         passed_ = d not in forbidden_imports
 
         if not passed_:
-            logger.error(
+            LOG.error(
                 f"{file_name} should not import from {forbidden_imports}"
             )
 
@@ -41,7 +40,7 @@ def check_all_files(config: dict, file_names: list[Path]) -> int:
     passed = True
 
     for file_name in file_names:
-        logger.info(f"Processing {file_name}")
+        LOG.info(f"Processing {file_name}")
         module = extract_module(file_name=file_name)
         passed_ = check_dependencies(
             file_name=file_name,
