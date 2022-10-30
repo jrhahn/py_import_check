@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import Sequence
 
 from import_check import LOG
+from import_check.configuration import load
 from import_check.dependency import analyse
-from import_check.import_check_configuration import load
 
 
 def extract_module(file_name: Path) -> str:

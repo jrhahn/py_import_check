@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from import_check.import_check_configuration import load
+from import_check.configuration import load
 
 
 @pytest.fixture
