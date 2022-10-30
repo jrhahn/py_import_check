@@ -1,4 +1,4 @@
-# py_import_check
+# *import-check* pre-commit hook
 
 ## Description
 This pre-commit hook allows to prevent importing a Python module by another
