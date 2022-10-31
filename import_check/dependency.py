@@ -3,6 +3,8 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
+from import_check import LOG
+
 
 def analyse(file: Path) -> set:
     modules = set()
@@ -19,6 +21,14 @@ def analyse(file: Path) -> set:
     node_iter = ModuleLister()
 
     with open(file) as fp:
-        node_iter.visit(ast.parse(fp.read()))
+        content = fp.read()
+
+    try:
+        parsed = ast.parse(content)
+    except SyntaxError as e:
+        LOG.error(e)
+        return set()
+
+    node_iter.visit(parsed)
 
     return modules
