@@ -45,12 +45,15 @@ forbidden_imports = [ "package_1" ]
 In order to execute import-check before committing your code changes, add the following
 lines to the project's ``.pre-commit-config.yaml``:
 ```yaml
--   repo: git@github.com:jrhahn/py_import_check.git
-    rev: develop
+-   repo: https://github.com/jrhahn/py_import_check
+    rev: v0.0.1
     hooks:
     - id: import-check
 ```
-and run ``pre-commit install``
+and run ``pre-commit install``.
+
+Note: please make sure to use the latest release. The package releases can
+be found here: [https://github.com/jrhahn/py_import_check/releases/](https://github.com/jrhahn/py_import_check/releases/)
 
 
 ## Update
